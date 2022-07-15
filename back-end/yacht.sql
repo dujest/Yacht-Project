@@ -23,3 +23,6 @@ INSERT INTO yacht_param (id, L, B, T, D, Lbc, Cp, Fn) VALUES (1, 10.06, 4, 1.6, 
 
 INSERT INTO yacht (id, param_id, yacht_name) VALUES (1, 1, 'standfast1');
 INSERT INTO yacht (id, param_id, yacht_name) VALUES (2, 1, 'standfast2');
+
+SELECT * FROM yacht 
+JOIN yacht_param ON yacht.param_id = yacht_param.id;
