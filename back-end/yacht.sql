@@ -12,3 +12,9 @@ CREATE TABLE yacht_param (
     Cp REAL NOT NULL,
     Fn REAL NOT NULL
 );
+
+CREATE TABLE yacht (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    param_id BIGSERIAL NOT NULL REFERENCES yacht_param (id),
+    yacht_name VARCHAR(50)
+);
