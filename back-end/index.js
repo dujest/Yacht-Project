@@ -52,8 +52,34 @@ app.get('/yachts/:id', async (req, res) => {
 })
 
 // update a yacht
+app.put('/yachts/:id', async (req, res) => {
+    try {
+        const {id} = req.params
+        const {yacht_name} = req.body
+        const updateYacht = await pool.query(
+            "UPDATE yacht SET yacht_name = $1 WHERE id = $2",
+            [yacht_name, id]
+        )
+        res.json("Yacht has been updated!")
+    } catch (error) {
+        console.error(error.message)
+    }
+})
 
 // delete a yacht
+app.delete('/yachts/:id', async (req, res) => {
+    try {
+        const {id} = req.params
+        const deleteYacht = await pool.query(
+            "DELETE FROM yacht WHERE id = $1",
+            [id]
+        )
+        res.json("Yacht has been deleted!")
+    } catch (error) {
+        console.error(error.message)
+    }
+})
+
 
 const port = 5000
 
