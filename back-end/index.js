@@ -7,12 +7,11 @@ const pool = require('./db')
 app.use(cors())
 app.use(express.json()) //req.body
 
-// ROUTES
+// ROUTES //
 
 // create a yacht
 app.post('/yachts', async (req, res) => {
     try {
-        console.log(req.body)
         const {param_id} = req.body
         const {yacht_name} = req.body
         const newYacht = await pool.query(
@@ -57,10 +56,10 @@ app.put('/yachts/:id', async (req, res) => {
         const {id} = req.params
         const {yacht_name} = req.body
         const updateYacht = await pool.query(
-            "UPDATE yacht SET yacht_name = $1 WHERE id = $2",
+            "UPDATE yacht SET yacht_name = $1 WHERE id = $2 RETURNING *",
             [yacht_name, id]
         )
-        res.json("Yacht has been updated!")
+        res.json(updateYacht.rows[0])
     } catch (error) {
         console.error(error.message)
     }
