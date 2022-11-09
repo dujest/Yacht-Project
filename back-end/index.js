@@ -3,6 +3,8 @@ const app = express()
 const cors = require('cors')
 const pool = require('./db')
 
+app.use(express.static('../front-end'))
+
 // middleware
 app.use(cors())
 app.use(express.json()) //req.body
