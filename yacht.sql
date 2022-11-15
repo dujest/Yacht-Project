@@ -1,6 +1,6 @@
-CREATE DATABASE yacht_data;
+-- CREATE DATABASE yacht_data;
 
-\c yacht_data;
+-- \c yacht_data;
 
 CREATE TABLE yacht (
     id BIGSERIAL NOT NULL PRIMARY KEY,
