@@ -33,8 +33,8 @@ app.post('/yachts', async (req, res) => {
 
         res.json(newYacht.rows[0])
     } catch (error) {
-        console.error(error.message)
-        // console.log(error)
+        // console.error(error.message)
+        throw error
     }
 
 })
