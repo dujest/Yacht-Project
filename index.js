@@ -1,11 +1,12 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const path = require('path')
 const pool = require('./db')
 const axios = require('axios')
 const PORT = process.env.PORT || 5000;
 
-app.use(express.static('./client'))
+app.use(express.static(path.join(__dirname, 'client')))
 
 // middleware
 app.use(cors())
@@ -102,7 +103,7 @@ app.delete('/yachts/:id', async (req, res) => {
 })
 
 app.get('*', (req, res) => {
-    res.sendFile("./client/index.html")
+    res.sendFile(path.join(__dirname, "client/index.html"))
 })
 
 app.listen(PORT, () => {
