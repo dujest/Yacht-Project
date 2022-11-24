@@ -1,6 +1,7 @@
 const axios = require('axios')
 const pool = require('./db')
 const path = require('path')
+const { createCustomError } = require('./custom-error')
 
 // create a yacht
 const createYacht = async (req, res) => {
@@ -11,6 +12,9 @@ const createYacht = async (req, res) => {
         const { data: { resistance } } = await axios.post('https://yacht-resistance.herokuapp.com/predict', {
             length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity
         })
+        if (!resistance) {
+            return next(createCustomError('The resistance can not be predicted:', 404))
+        }
         console.log(resistance)
 
         const newYacht = await pool.query(
@@ -20,8 +24,7 @@ const createYacht = async (req, res) => {
 
         res.status(201).json(newYacht.rows[0])
     } catch (error) {
-        // console.error(error.message)
-        throw error
+        console.error(error.message)
     }
 
 }
@@ -46,6 +49,9 @@ const getYacht = async (req, res) => {
             "SELECT * FROM yacht WHERE id = $1",
             [id]
         )
+        if (!aYacht) {
+            return next(createCustomError(`No yacht with id: ${id}`, 404))
+        }
         res.status(200).json(aYacht.rows[0])
     } catch (error) {
         console.error(error.message)
@@ -63,6 +69,9 @@ const updateYacht = async (req, res) => {
         const { data: { resistance } } = await axios.post('https://yacht-resistance.herokuapp.com/predict', {
             length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity
         })
+        if (!resistance) {
+            return next(createCustomError('The resistance can not be predicted:', 404))
+        }
         console.log(resistance)
 
         const updateYacht = await pool.query(
@@ -84,6 +93,9 @@ const deleteYacht = async (req, res) => {
             "DELETE FROM yacht WHERE id = $1",
             [id]
         )
+        if (!deleteYacht) {
+            return next(createCustomError(`No yacht with id: ${id}`, 404))
+        }
         res.status(200).json("Yacht has been deleted!")
     } catch (error) {
         console.error(error.message)

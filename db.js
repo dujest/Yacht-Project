@@ -9,8 +9,6 @@ const devConfig = {
     database: process.env.PG_DATABASE
 }
 
-console.log(process.env)
-
 const proConfig = {
     connectionString: process.env.DATABASE_URL,
     ssl: true,
