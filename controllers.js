@@ -11,7 +11,6 @@ const createYacht = async (req, res) => {
         const { data: { resistance } } = await axios.post('https://yacht-resistance.herokuapp.com/predict', {
             length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity
         })
-
         console.log(resistance)
 
         const newYacht = await pool.query(
@@ -19,7 +18,7 @@ const createYacht = async (req, res) => {
             [yacht_name, length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity, resistance]
         )
 
-        res.json(newYacht.rows[0])
+        res.status(201).json(newYacht.rows[0])
     } catch (error) {
         // console.error(error.message)
         throw error
@@ -33,7 +32,7 @@ const getAllYachts = async (req, res) => {
         const allYachts = await pool.query(
             "SELECT * FROM yacht ORDER BY id DESC"
         )
-        res.json(allYachts.rows)
+        res.status(200).json(allYachts.rows)
     } catch (error) {
         console.error(error.message)
     }
@@ -47,7 +46,7 @@ const getYacht = async (req, res) => {
             "SELECT * FROM yacht WHERE id = $1",
             [id]
         )
-        res.json(aYacht.rows[0])
+        res.status(200).json(aYacht.rows[0])
     } catch (error) {
         console.error(error.message)
     }
@@ -65,11 +64,12 @@ const updateYacht = async (req, res) => {
             length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity
         })
         console.log(resistance)
+
         const updateYacht = await pool.query(
             "UPDATE yacht SET yacht_name = $1, length_wl = $2, beam_wl = $3, draft = $4, displacement = $5, centre_of_buoyancy = $6, prismatic_coefficient = $7, velocity = $8, resistance = $9 WHERE id = $10 RETURNING *",
             [yacht_name, length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity, resistance, id]
         )
-        res.json(updateYacht.rows[0])
+        res.status(200).json(updateYacht.rows[0])
         console.log(updateYacht.rows[0])
     } catch (error) {
         console.error(error.message)
@@ -84,7 +84,7 @@ const deleteYacht = async (req, res) => {
             "DELETE FROM yacht WHERE id = $1",
             [id]
         )
-        res.json("Yacht has been deleted!")
+        res.status(200).json("Yacht has been deleted!")
     } catch (error) {
         console.error(error.message)
     }
