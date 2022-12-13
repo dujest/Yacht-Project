@@ -2,38 +2,30 @@ const axios = require('axios')
 const pool = require('./db')
 const path = require('path')
 const { createCustomError } = require('./custom-error')
+const yachtSchema = require('./validate')
+const { YachtBluePrint } = require('./models/yacht')
+const { predictResistance } = require('./connectors/resistance')
+const { insertYacht, selectYacht, selectYachts, updateYacht, deleteYacht } = require('./dal/yacht')
 
 // create a yacht
 const createYacht = async (req, res) => {
 
-    const { yacht_name, length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity } = req.body
-    console.log(req.body)
+    const newYacht = new YachtBluePrint(req.body)
 
-    const { data: { resistance } } = await axios.post(`${process.env.YACHT_RESISTANCE_URL}/predict`, {
-        length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity
-    })
-    if (!resistance) {
-        throw createCustomError('The resistance can not be predicted:', 404)
-    }
-    console.log(resistance)
+    const yachtResistance = await predictResistance(newYacht)
 
-    const newYacht = await pool.query(
-        "INSERT INTO yacht (yacht_name, length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity, resistance) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
-        [yacht_name, length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity, resistance]
-    )
+    const createdYacht = await insertYacht(yachtResistance)
 
-    res.status(201).json(newYacht.rows[0])
-
+    res.status(201).json(createdYacht)
 
 }
 
 // get all yachts
 const getAllYachts = async (req, res) => {
 
-    const allYachts = await pool.query(
-        "SELECT * FROM yacht ORDER BY id DESC"
-    )
-    res.status(200).json(allYachts.rows)
+    const allYachts = await selectYachts()
+
+    res.status(200).json(allYachts)
 
 }
 
@@ -41,53 +33,35 @@ const getAllYachts = async (req, res) => {
 const getYacht = async (req, res) => {
 
     const { id } = req.params
-    const aYacht = await pool.query(
-        "SELECT * FROM yacht WHERE id = $1",
-        [id]
-    )
-    if (!aYacht) {
-        throw createCustomError(`No yacht with id: ${id}`, 404)
-    }
-    res.status(200).json(aYacht.rows[0])
+
+    const yacht = await selectYacht(id)
+
+    res.status(200).json(yacht)
 
 }
 
 // update a yacht
-const updateYacht = async (req, res) => {
+const putYacht = async (req, res) => {
 
-    console.log(req.params)
-    console.log(req.body)
     const { id } = req.params
-    const { yacht_name, length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity } = req.body
 
-    const { data: { resistance } } = await axios.post(`${process.env.YACHT_RESISTANCE_URL}/predict`, {
-        length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity
-    })
-    if (!resistance) {
-        throw createCustomError('The resistance can not be predicted:', 404)
-    }
-    console.log(resistance)
+    const newYacht = new YachtBluePrint(req.body)
 
-    const updateYacht = await pool.query(
-        "UPDATE yacht SET yacht_name = $1, length_wl = $2, beam_wl = $3, draft = $4, displacement = $5, centre_of_buoyancy = $6, prismatic_coefficient = $7, velocity = $8, resistance = $9 WHERE id = $10 RETURNING *",
-        [yacht_name, length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity, resistance, id]
-    )
-    res.status(200).json(updateYacht.rows[0])
-    console.log(updateYacht.rows[0])
+    const yachtResistance = await predictResistance(newYacht)
+
+    const updatedYacht = await updateYacht(id, yachtResistance)
+
+    res.status(201).json(updatedYacht)
 
 }
 
 // delete a yacht
-const deleteYacht = async (req, res) => {
+const delYacht = async (req, res) => {
 
     const { id } = req.params
-    const deleteYacht = await pool.query(
-        "DELETE FROM yacht WHERE id = $1",
-        [id]
-    )
-    if (!deleteYacht) {
-        throw createCustomError(`No yacht with id: ${id}`, 404)
-    }
+
+    await deleteYacht(id)
+
     res.status(200).json("Yacht has been deleted!")
 
 }
@@ -100,7 +74,7 @@ module.exports = {
     createYacht,
     getAllYachts,
     getYacht,
-    updateYacht,
-    deleteYacht,
+    putYacht,
+    delYacht,
     getIndexHtml
 }
