@@ -1,4 +1,4 @@
-const yachtSchema = require("../validate")
+const yachtSchema = require('./validate')
 
 class YachtBluePrint {
     yacht_name = null
@@ -12,7 +12,16 @@ class YachtBluePrint {
 
     constructor(data) {
         yachtSchema.validateSync(data, { strict: true, abortEarly: false })
-        const { yacht_name, length_wl, beam_wl, draft, displacement, centre_of_buoyancy, prismatic_coefficient, velocity } = data
+        const {
+            yacht_name,
+            length_wl,
+            beam_wl,
+            draft,
+            displacement,
+            centre_of_buoyancy,
+            prismatic_coefficient,
+            velocity,
+        } = data
         this.yacht_name = yacht_name
         this.length_wl = length_wl
         this.beam_wl = beam_wl
@@ -39,5 +48,5 @@ class YachtDB extends YachtBluePrint {
 
 module.exports = {
     YachtBluePrint,
-    YachtDB
+    YachtDB,
 }

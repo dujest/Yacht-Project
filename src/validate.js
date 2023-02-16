@@ -8,7 +8,7 @@ const yachtSchema = yup.object({
     displacement: yup.number().required(),
     centre_of_buoyancy: yup.number().required(),
     prismatic_coefficient: yup.number().required(),
-    velocity: yup.number().required()
+    velocity: yup.number().required(),
 })
 
 module.exports = yachtSchema
