@@ -8,7 +8,7 @@
         "npm": "8.5.0"
     },
     "scripts": {
-        "start": "node index.js",
+        "start": "nodemon --require dotenv/config src/index.js",
         "format": "prettier --write \"src/**/*.js\" \"client/**/*.js\""
     },
     "keywords": [],
