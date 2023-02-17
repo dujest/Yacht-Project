@@ -7,7 +7,8 @@ const routes = require('./routes')
 const errorHandlerMiddleware = require('./errors/error-handler')
 const PORT = process.env.PORT || 5000
 
-app.use(express.static(path.join(__dirname, 'client')))
+console.log(__dirname)
+app.use(express.static(path.join(__dirname, '../client')))
 
 // middleware
 app.use(cors())
