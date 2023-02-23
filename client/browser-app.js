@@ -20,19 +20,19 @@ const showYachts = async () => {
             .map((yacht) => {
                 const { id, yacht_name, velocity, resistance } = yacht
                 return `<div class="single-yacht">
-<h5>${yacht_name}</h5>
-<h6 style="font-size: 0.75rem;">Resistance = ${resistance} N (at ${velocity} knots)</h6>
-<div class="yacht-links">
-<!-- edit link -->
-<a href="yacht.html?id=${id}" class="edit-link">
-<i class="fas fa-edit"></i>
-</a>
-<!-- delete btn -->
-<button type="button" class="delete-btn" data-id="${id}">
-<i class="fas fa-trash"></i>
-</button>
-</div>
-</div>`
+                        <h5>${yacht_name}</h5>
+                        <h6 style="font-size: 0.75rem;">Resistance = ${resistance} N (at ${velocity} knots)</h6>
+                        <div class="yacht-links">
+                        <!-- edit link -->
+                        <a href="yacht.html?id=${id}" class="edit-link">
+                        <i class="fas fa-edit"></i>
+                        </a>
+                        <!-- delete btn -->
+                        <button type="button" class="delete-btn" data-id="${id}">
+                        <i class="fas fa-trash"></i>
+                        </button>
+                        </div>
+                        </div>`
             })
             .join('')
         yachtsDOM.innerHTML = allYachts
@@ -57,7 +57,7 @@ yachtsDOM.addEventListener('click', async (e) => {
             await axios.delete(`/yachts/${id}`)
             showYachts()
         } catch (error) {
-            console.log(error)
+            throw error
         }
     }
 
@@ -68,7 +68,6 @@ yachtsDOM.addEventListener('click', async (e) => {
 
 formDOM.addEventListener('submit', async (e) => {
     e.preventDefault()
-    console.log(e)
 
     try {
         await axios.post('/yachts', {
