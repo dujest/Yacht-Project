@@ -69,28 +69,42 @@ yachtsDOM.addEventListener('click', async (e) => {
 formDOM.addEventListener('submit', async (e) => {
     e.preventDefault()
 
-    try {
-        await axios.post('/yachts', {
-            yacht_name: e.target[0].value,
-            length_wl: parseFloat(e.target[1].value),
-            beam_wl: parseFloat(e.target[2].value),
-            draft: parseFloat(e.target[3].value),
-            displacement: parseFloat(e.target[4].value),
-            centre_of_buoyancy: parseFloat(e.target[5].value),
-            prismatic_coefficient: parseFloat(e.target[6].value),
-            velocity: parseFloat(e.target[7].value),
-        })
-        showYachts()
-        formAlertDOM.style.display = 'block'
-        formAlertDOM.textContent = `The residuary resistance has been predicted!`
-        formAlertDOM.classList.add('text-success')
-    } catch (error) {
-        formAlertDOM.style.display = 'block'
-        formAlertDOM.innerHTML = `error, please try again`
-    }
+    let l = parseFloat(e.target[1].value)
+    let v = parseFloat(e.target[7].value)
+    let kt_ms = 0.5144
+    let g = 9.81
+    let fn = (v * kt_ms) / Math.sqrt(g * l)
+    if (fn > 0.45) {
+        alert(`
+The Froude number must be lower than 0.450 to be within the capabilities of the ML model!\n
+Fn = (velocity * 0.5144) [m/s] / sqrt(9.81 * w_length) [m/s] < 0.450\n
+Your current Froude number is ${fn.toFixed(3)}\n
+Increase the waterline length or decrease the velocity!
+        `)
+    } else {
+        try {
+            await axios.post('/yachts', {
+                yacht_name: e.target[0].value,
+                length_wl: parseFloat(e.target[1].value),
+                beam_wl: parseFloat(e.target[2].value),
+                draft: parseFloat(e.target[3].value),
+                displacement: parseFloat(e.target[4].value),
+                centre_of_buoyancy: parseFloat(e.target[5].value),
+                prismatic_coefficient: parseFloat(e.target[6].value),
+                velocity: parseFloat(e.target[7].value),
+            })
+            showYachts()
+            formAlertDOM.style.display = 'block'
+            formAlertDOM.textContent = `The residuary resistance has been predicted!`
+            formAlertDOM.classList.add('text-success')
+        } catch (error) {
+            formAlertDOM.style.display = 'block'
+            formAlertDOM.innerHTML = `error, please try again`
+        }
 
-    setTimeout(() => {
-        formAlertDOM.style.display = 'none'
-        formAlertDOM.classList.remove('text-success')
-    }, 3500)
+        setTimeout(() => {
+            formAlertDOM.style.display = 'none'
+            formAlertDOM.classList.remove('text-success')
+        }, 3500)
+    }
 })
