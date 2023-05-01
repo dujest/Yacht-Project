@@ -8,8 +8,8 @@
         "npm": "9.5.1"
     },
     "scripts": {
-        "start": "nodemon --require dotenv/config src/index.js",
-        "format": "prettier --write \"src/**/*.js\" \"client/**/*.js\""
+        "start": "nodemon --require dotenv/config server/index.js",
+        "format": "prettier --write \"server/**/*.js\" \"client/**/*.js\""
     },
     "keywords": [],
     "author": "duje",
