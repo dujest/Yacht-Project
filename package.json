@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "engines": {
-        "node": "16.14.2",
-        "npm": "8.5.0"
+        "node": "18.16.0",
+        "npm": "9.5.1"
     },
     "scripts": {
         "start": "nodemon --require dotenv/config src/index.js",
